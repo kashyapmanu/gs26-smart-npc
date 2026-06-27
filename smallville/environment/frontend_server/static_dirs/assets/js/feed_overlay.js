@@ -10,16 +10,20 @@
     if (!p) {
       p = document.createElement("div");
       p.id = "smart-npc-feed";
+      p.className = "hidden";
+      document.body.appendChild(p);
+    }
+    if (!p.querySelector(".header")) {
       const header = document.createElement("div");
       header.className = "header";
       header.innerHTML = '<span>Town Feed</span>' +
         '<button id="smart-npc-propagate" title="Start NPC retweets">Spread the word</button>';
       p.appendChild(header);
+
       const empty = document.createElement("div");
       empty.className = "empty";
       empty.textContent = "Walk into the burning house (left) to seed the first post.";
       p.appendChild(empty);
-      document.body.appendChild(p);
 
       document.getElementById("smart-npc-propagate").addEventListener("click", function () {
         const btn = this;
