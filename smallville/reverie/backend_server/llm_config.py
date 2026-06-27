@@ -1,5 +1,6 @@
 import os
 from functools import lru_cache
+from pathlib import Path
 from typing import Optional
 
 try:
@@ -7,11 +8,21 @@ try:
 except ImportError:
     OpenAI = None  # LLM SDK import is required for production; tests install it explicitly.
 
-MESHAPI_BASE_URL = "https://api.meshapi.ai/v1"
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+# Auto-load smallville/.env so the model + API keys are configurable from one
+# file without exporting shell env vars. Shell env vars (if set) win over .env.
+try:
+    from dotenv import load_dotenv
 
-PRIMARY_MODEL = os.getenv("MESHAPI_MODEL", "gpt-4o-mini")
-FALLBACK_MODEL = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+    _ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
+    load_dotenv(_ENV_PATH, override=False)
+except Exception:  # noqa: BLE001
+    pass  # dotenv optional; tests/stubs run without it.
+
+MESHAPI_BASE_URL = os.getenv("MESHAPI_BASE_URL", "https://api.meshapi.ai/v1")
+OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+
+PRIMARY_MODEL = os.getenv("MESHAPI_MODEL", "deepseek/deepseek-v4-flash")
+FALLBACK_MODEL = os.getenv("OPENROUTER_MODEL", "deepseek/deepseek-v4-flash")
 
 
 def _primary_obj():
