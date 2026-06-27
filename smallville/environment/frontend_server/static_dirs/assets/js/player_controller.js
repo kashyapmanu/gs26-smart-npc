@@ -17,7 +17,9 @@
     if (wasdKeys.D.isDown) vx += speed;
     if (wasdKeys.W.isDown) vy -= speed;
     if (wasdKeys.S.isDown) vy += speed;
-    player.body.setVelocity(vx, vy);
+    if (vx !== 0 || vy !== 0) {
+      player.body.setVelocity(vx, vy);
+    }
   }
 
   function checkHotspots(scene, player) {
