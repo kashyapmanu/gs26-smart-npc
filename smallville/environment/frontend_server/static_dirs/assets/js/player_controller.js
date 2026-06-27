@@ -1,25 +1,23 @@
 (function () {
   const SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";
   const hotspotState = new Map();
-  let wasdKeys = null;
+  let keys = null;
 
-  function bindWASD(scene) {
-    if (wasdKeys) return;
-    wasdKeys = scene.input.keyboard.addKeys("W,A,S,D");
+  function bindKeys(scene) {
+    if (keys) return;
+    keys = scene.input.keyboard.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT");
   }
 
-  function applyWASD(player) {
-    if (!wasdKeys || !player || !player.body) return;
+  function applyMovement(player) {
+    if (!keys || !player || !player.body) return;
     const speed = 300;
     let vx = 0;
     let vy = 0;
-    if (wasdKeys.A.isDown) vx -= speed;
-    if (wasdKeys.D.isDown) vx += speed;
-    if (wasdKeys.W.isDown) vy -= speed;
-    if (wasdKeys.S.isDown) vy += speed;
-    if (vx !== 0 || vy !== 0) {
-      player.body.setVelocity(vx, vy);
-    }
+    if (keys.A.isDown || keys.LEFT.isDown) vx -= speed;
+    if (keys.D.isDown || keys.RIGHT.isDown) vx += speed;
+    if (keys.W.isDown || keys.UP.isDown) vy -= speed;
+    if (keys.S.isDown || keys.DOWN.isDown) vy += speed;
+    player.body.setVelocity(vx, vy);
   }
 
   function checkHotspots(scene, player) {
@@ -55,10 +53,10 @@
 
   window.SmartNPCPlayer = {
     init: function (scene, player) {
-      bindWASD(scene);
+      bindKeys(scene);
     },
     update: function (scene, player) {
-      applyWASD(player);
+      applyMovement(player);
       checkHotspots(scene, player);
     }
   };
