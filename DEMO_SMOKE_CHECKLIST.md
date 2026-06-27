@@ -17,7 +17,7 @@ If any item fails and cannot be fixed in 2 minutes, switch to the fallback reel.
       (No third shell — the orchestrator now runs in-process via `POST /orchestrator/start`.)
 
 ## Beat 1 — The Act
-- [ ] Open the demo URL (see launch one-liner below) in Chrome/Safari
+- [ ] Open the demo URL `http://127.0.0.1:8000/smart-npc-demo/` in Chrome/Safari
 - [ ] Phaser world renders and the camera-centred player responds to arrow keys
 - [ ] WASD also moves the player (added controls)
 - [ ] Walking the player into the burning-building hotspot posts a `rescue_person` action
@@ -26,9 +26,9 @@ If any item fails and cannot be fixed in 2 minutes, switch to the fallback reel.
 
 ## Beat 2 — Propagation
 - [ ] Feed overlay panel appears top-right and streams the first post (auto via SSE)
-- [ ] Trigger propagation in one of two ways:
-      - **From the browser console** (easiest): `fetch(SMART_NPC_API + "/orchestrator/start", {method:"POST"})`
-      - **From a shell**: `curl -X POST http://localhost:8001/orchestrator/start`
+- [ ] Click the **Town Feed** button, then click **Spread the word** to trigger propagation
+      - Alternatively, from the browser console: `fetch(SMART_NPC_API + "/orchestrator/start", {method:"POST"})`
+      - Or from a shell: `curl -X POST http://localhost:8001/orchestrator/start`
 - [ ] Retweets appear within a few seconds and the reach counter climbs (target ~12)
 - [ ] By roughly `SMART_NPC_MAX_SIM_T` seconds, the post audience is promoted to "town"
 - [ ] Local NPCs near the rescue also chat on the map ("did you hear about the fire?" — visible via the upstream pronunciatio/chat bubble UI)

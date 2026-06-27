@@ -24,7 +24,7 @@ DJANGO_LOG="/tmp/smart-npc-django.log"
 API_LOG="/tmp/smart-npc-api.log"
 DJANGO_PID_FILE="/tmp/smart-npc-django.pid"
 API_PID_FILE="/tmp/smart-npc-api.pid"
-DEMO_URL="http://127.0.0.1:8000/demo/July1_the_ville_isabella_maria_klaus-step-3-20/1/1/"
+DEMO_URL="http://127.0.0.1:8000/smart-npc-demo/"
 
 is_running() {
   local pidfile="$1"
