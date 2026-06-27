@@ -108,6 +108,10 @@ class AssociativeMemory:
     if kw_strength_load["kw_strength_thought"]: 
       self.kw_strength_thought = kw_strength_load["kw_strength_thought"]
 
+    # Smart NPCs extension: per-NPC feed-inbox tracking which social posts have
+    # been delivered. Used by feed.feed_inbox.deliver_to_inbox for idempotency.
+    self.feed_inbox: list = []
+
     
   def save(self, out_json): 
     r = dict()
