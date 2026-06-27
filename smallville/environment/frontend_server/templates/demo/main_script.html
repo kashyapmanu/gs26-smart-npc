@@ -5,7 +5,7 @@
   // smart_npc_api is served) and lazily-load hotspot config from
   // /static/demo_data/hotspots.json, which smart-npc player_controller.js
   // reads via window.SMART_NPC_HOTSPOTS.
-  window.SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8000";
+  window.SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";
   (async function () {
     try {
       const r = await fetch("/static/demo_data/hotspots.json");
