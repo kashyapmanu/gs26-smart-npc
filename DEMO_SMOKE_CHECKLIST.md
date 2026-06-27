@@ -4,22 +4,20 @@ Run before each judging session. All items must pass before going live.
 If any item fails and cannot be fixed in 2 minutes, switch to the fallback reel.
 
 ## Environment
-- [ ] `MESHAPI_API_KEY` is exported in the shell that launches the backend
-- [ ] `OPENROUTER_API_KEY` is exported in the same shell
+- [ ] API keys + model set in `smallville/.env` (auto-loaded, no `export` needed):
+      `MESHAPI_API_KEY`, `OPENROUTER_API_KEY`, `MESHAPI_MODEL=deepseek/deepseek-v4-flash`
 - [ ] Laptop has internet (`ping api.meshapi.ai`)
-- [ ] **Known port-conflict fix (done):** the upstream Django frontend uses port
-      8000. The Smart NPCs FastAPI app runs on a separate port (8001). The
-      frontend's `window.SMART_NPC_API` (set in `main_script.html` bootstrap)
-      points to `http://localhost:8001` (NOT 8000). Verify the bootstrap line:
-      `window.SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";`
-- [ ] Django frontend server runs: `cd smallville/environment/frontend_server && ../../.venv/bin/python manage.py runserver`
-      Then open <http://localhost:8000/> to confirm "environment server is up and running"
-- [ ] FastAPI smart_npc_api runs: `cd smallville/reverie/backend_server && ../../.venv/bin/uvicorn smart_npc_api:app --port 8001 --reload`
-- [ ] (Optional) Demo orchestrator runs in a third shell: `cd smallville/reverie/backend_server && ../../.venv/bin/python demo_orchestrator.py`
-      (NB: only after at least one rescue action has been posted)
+- [ ] **Known port layout:** Django frontend on 8000, FastAPI smart_npc_api on 8001.
+      The frontend's `window.SMART_NPC_API` points to `http://localhost:8001`.
+- [ ] **Shell 1 — Django frontend:**
+      `cd smallville/environment/frontend_server && ../../.venv/bin/python manage.py runserver`
+      Open <http://localhost:8000/> to confirm "environment server is up and running"
+- [ ] **Shell 2 — FastAPI smart_npc_api:**
+      `cd smallville/reverie/backend_server && ../../.venv/bin/uvicorn smart_npc_api:app --port 8001`
+      (No third shell — the orchestrator now runs in-process via `POST /orchestrator/start`.)
 
 ## Beat 1 — The Act
-- [ ] Open the demo URL `http://localhost:8000/demo/1/the_ville/` in Chrome/Safari
+- [ ] Open the demo URL (see launch one-liner below) in Chrome/Safari
 - [ ] Phaser world renders and the camera-centred player responds to arrow keys
 - [ ] WASD also moves the player (added controls)
 - [ ] Walking the player into the burning-building hotspot posts a `rescue_person` action
@@ -28,7 +26,10 @@ If any item fails and cannot be fixed in 2 minutes, switch to the fallback reel.
 
 ## Beat 2 — Propagation
 - [ ] Feed overlay panel appears top-right and streams the first post (auto via SSE)
-- [ ] If running the orchestrator: retweets appear within a few seconds and the reach counter climbs
+- [ ] Trigger propagation in one of two ways:
+      - **From the browser console** (easiest): `fetch(SMART_NPC_API + "/orchestrator/start", {method:"POST"})`
+      - **From a shell**: `curl -X POST http://localhost:8001/orchestrator/start`
+- [ ] Retweets appear within a few seconds and the reach counter climbs (target ~12)
 - [ ] By roughly `SMART_NPC_MAX_SIM_T` seconds, the post audience is promoted to "town"
 - [ ] Local NPCs near the rescue also chat on the map ("did you hear about the fire?" — visible via the upstream pronunciatio/chat bubble UI)
 
