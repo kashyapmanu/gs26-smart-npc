@@ -16,7 +16,10 @@ app = FastAPI(title="Smart NPCs API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000"],
+    allow_origins=[
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -103,3 +106,32 @@ async def stream_feed():
                 yield f"data: {json.dumps(p.to_dict())}\n\n"
             await asyncio.sleep(0.5)
     return StreamingResponse(gen(), media_type="text/event-stream")
+
+
+# In-process orchestrator launcher. The orchestrator shares this process's
+# `_feed` and `_owner_memory`, so it can mutate them directly. Triggered by
+# the demo driver (or the frontend) once the rescue post exists.
+_orchestrator_task = None
+
+
+class _OwnerPersonaWrap:
+    """Wraps the module-level `_owner_memory` so feed.feed_inbox.deliver_to_inbox
+    (which reads `persona.a_mem`) is satisfied."""
+
+    def __init__(self):
+        self.a_mem = _owner_memory
+        self.scratch = type("Scratch", (), {"curr_time": None})()
+
+
+@app.post("/orchestrator/start")
+async def orchestrator_start():
+    """Start the demo propagation loop in the background. Idempotent — only
+    one orchestrator runs at a time. Returns immediately."""
+    global _orchestrator_task
+    from demo_orchestrator import run_demo_loop
+    if _orchestrator_task is None or _orchestrator_task.done():
+        _orchestrator_task = asyncio.create_task(
+            run_demo_loop(_feed, owner_persona=_OwnerPersonaWrap())
+        )
+        return {"status": "started"}
+    return {"status": "already_running"}
