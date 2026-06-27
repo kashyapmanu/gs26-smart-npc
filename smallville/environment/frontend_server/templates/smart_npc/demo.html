@@ -1,11 +1,48 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart NPCs Demo</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart NPCs Demo</title>
+  <link rel="stylesheet" href="{% static 'css/smart_npc_demo.css' %}">
 </head>
 <body>
-    <h1>Smart NPCs demo loading...</h1>
+  <div id="game-container"></div>
+
+  <button id="feed-toggle" class="floating-btn" title="Open Town Feed">Town Feed</button>
+  <div id="smart-npc-feed" class="hidden"></div>
+
+  <div id="smart-npc-help">
+    <div class="help-header">
+      <strong>How to play</strong>
+      <button id="help-toggle" title="Collapse">?</button>
+    </div>
+    <ol id="help-body">
+      <li>Use <span class="key">WASD</span> to move.</li>
+      <li>Walk into the <strong>burning house</strong> to rescue.</li>
+      <li>Click <strong>Town Feed</strong>, then <strong>Spread the word</strong>.</li>
+      <li>Walk to the <strong>restaurant</strong> for the callback.</li>
+    </ol>
+  </div>
+
+  <script>
+    window.SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";
+  </script>
+  <script src='https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js'></script>
+  <script src="{% static 'assets/js/smart_npc_game.js' %}"></script>
+  <script src="{% static 'assets/js/player_controller.js' %}"></script>
+  <script src="{% static 'assets/js/feed_overlay.js' %}"></script>
+  <script src="{% static 'assets/js/help_panel.js' %}"></script>
+  <script>
+    window.addEventListener("load", function () {
+      SmartNPCGame.boot({
+        container: "game-container",
+        simCode: "July1_the_ville_isabella_maria_klaus-step-3-20"
+      });
+      if (window.SmartNPCFeed) window.SmartNPCFeed.attachToggle("feed-toggle");
+      if (window.SmartNPCHelp) window.SmartNPCHelp.init("smart-npc-help", "help-toggle", "help-body");
+    });
+  </script>
 </body>
 </html>
