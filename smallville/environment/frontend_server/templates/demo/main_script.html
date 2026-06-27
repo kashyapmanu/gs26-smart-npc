@@ -1,5 +1,21 @@
 {% load staticfiles %}
 
+<script>
+  // Smart NPCs bootstrap: set the API base URL (where the FastAPI
+  // smart_npc_api is served) and lazily-load hotspot config from
+  // /static/demo_data/hotspots.json, which smart-npc player_controller.js
+  // reads via window.SMART_NPC_HOTSPOTS.
+  window.SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8000";
+  (async function () {
+    try {
+      const r = await fetch("/static/demo_data/hotspots.json");
+      window.SMART_NPC_HOTSPOTS = await r.json();
+    } catch (e) {
+      console.warn("smart-npc: could not load hotspots", e);
+      window.SMART_NPC_HOTSPOTS = window.SMART_NPC_HOTSPOTS || [];
+    }
+  })();
+</script>
 <script src="/static/assets/js/player_controller.js"></script>
 <script type="text/javascript">
 	/*
