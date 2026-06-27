@@ -1,5 +1,6 @@
 // Smart NPCs: live social-feed overlay. Subscribes to /feed/stream (SSE) and
-// renders posts with a reach counter. Pure display — no game logic.
+// renders posts with a reach counter. The panel is hidden by default and opened
+// via a toggle button.
 (function () {
   const API = window.SMART_NPC_API || "http://localhost:8001";
   let started = false;
@@ -38,23 +39,6 @@
     return p;
   }
 
-  function ensureHelp() {
-    let h = document.getElementById("smart-npc-help");
-    if (h) return h;
-    h = document.createElement("div");
-    h.id = "smart-npc-help";
-    h.innerHTML = '<h3>How to play this demo</h3>' +
-      '<ol>' +
-      '<li>Move your avatar with <span class="key">WASD</span> or arrow keys.</li>' +
-      '<li>Walk into the <b>burning house</b> (left) to <b>rescue</b> someone.</li>' +
-      '<li>Click <b>Spread the word</b> in the Town Feed to watch NPCs retweet the rescue.</li>' +
-      '<li>Walk into the <b>restaurant</b> (lower-right) to order food — the owner may react to the rescue.</li>' +
-      '</ol>' +
-      '<div class="controls"><b>Tip:</b> if the camera loses the player, just press any movement key.</div>';
-    document.body.appendChild(h);
-    return h;
-  }
-
   function escapeHtml(s) {
     return s ? String(s).replace(/[&<>"']/g, function (c) {
       return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
@@ -85,33 +69,51 @@
     panel.appendChild(el);
   }
 
+  function startStream() {
+    if (started) return;
+    started = true;
+    const panel = ensurePanel();
+    let es;
+    try {
+      es = new EventSource(API + "/feed/stream");
+    } catch (e) {
+      renderWarn(panel, "EventSource not supported; feed overlay disabled");
+      return;
+    }
+    es.onmessage = function (m) {
+      try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
+    };
+    es.onerror = function () {
+      renderWarn(panel, "feed stream interrupted — retrying...");
+      es.close();
+      setTimeout(function () {
+        try { es = new EventSource(API + "/feed/stream"); } catch (e) { return; }
+        es.onmessage = function (m) {
+          try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
+        };
+      }, 2000);
+    };
+  }
+
   window.SmartNPCFeed = {
+    attachToggle: function (buttonId) {
+      const btn = document.getElementById(buttonId);
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        const panel = ensurePanel();
+        const hidden = panel.classList.contains("hidden");
+        if (hidden) {
+          panel.classList.remove("hidden");
+          btn.textContent = "Close Feed";
+          startStream();
+        } else {
+          panel.classList.add("hidden");
+          btn.textContent = "Town Feed";
+        }
+      });
+    },
     start: function () {
-      if (started) return;
-      started = true;
-      ensureHelp();
-      const panel = ensurePanel();
-      let es;
-      try {
-        es = new EventSource(API + "/feed/stream");
-      } catch (e) {
-        renderWarn(panel, "EventSource not supported; feed overlay disabled");
-        return;
-      }
-      es.onmessage = function (m) {
-        try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
-      };
-      es.onerror = function () {
-        renderWarn(panel, "feed stream interrupted — retrying...");
-        es.close();
-        // Try to reconnect once after 2 seconds; give up silently if it fails again.
-        setTimeout(function () {
-          try { es = new EventSource(API + "/feed/stream"); } catch (e) { return; }
-          es.onmessage = function (m) {
-            try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
-          };
-        }, 2000);
-      };
+      startStream();
     }
   };
 })();
