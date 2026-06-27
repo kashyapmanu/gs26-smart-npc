@@ -1,13 +1,6 @@
-// Smart NPCs: player controller. Hooks into the upstream Phaser demo's
-// existing `player` object (camera-centred observer controlled via arrow
-// keys). Adds WASD as supplementary movement keys and posts actions when
-// the player centre enters configured hotspots.
 (function () {
   const SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";
-
-  // Per-hotspot "already fired in this dwell" guard. Reset when player
-  // leaves the hotspot radius.
-  const hotspotState = new Map(); // hotspot.key -> boolean (currently inside)
+  const hotspotState = new Map();
   let wasdKeys = null;
 
   function bindWASD(scene) {
@@ -17,11 +10,14 @@
 
   function applyWASD(player) {
     if (!wasdKeys || !player || !player.body) return;
-    const camera_speed = 400; // matches upstream's `const camera_speed = 400;`
-    if (wasdKeys.A.isDown)  { player.body.setVelocityX(-camera_speed); }
-    if (wasdKeys.D.isDown)  { player.body.setVelocityX(camera_speed);  }
-    if (wasdKeys.W.isDown)  { player.body.setVelocityY(-camera_speed); }
-    if (wasdKeys.S.isDown)  { player.body.setVelocityY(camera_speed);  }
+    const speed = 300;
+    let vx = 0;
+    let vy = 0;
+    if (wasdKeys.A.isDown) vx -= speed;
+    if (wasdKeys.D.isDown) vx += speed;
+    if (wasdKeys.W.isDown) vy -= speed;
+    if (wasdKeys.S.isDown) vy += speed;
+    player.body.setVelocity(vx, vy);
   }
 
   function checkHotspots(scene, player) {
@@ -38,7 +34,6 @@
         hotspotState.set(key, true);
         postAction({ type: h.type, where: h.where, t: scene.time.now / 1000 });
       } else if (!inside && hotspotState.get(key)) {
-        // left the hotspot: allow re-trigger on next enter
         hotspotState.set(key, false);
       }
     }
@@ -57,11 +52,9 @@
   }
 
   window.SmartNPCPlayer = {
-    // Called from the upstream create() inside scene context:
-    init: function (scene) {
+    init: function (scene, player) {
       bindWASD(scene);
     },
-    // Called from upstream update(time, delta) each frame:
     update: function (scene, player) {
       applyWASD(player);
       checkHotspots(scene, player);
