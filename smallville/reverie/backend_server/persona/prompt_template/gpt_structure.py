@@ -10,20 +10,14 @@ import openai
 import time 
 
 from utils import *
-
-openai.api_key = openai_api_key
+from llm_config import safe_chat_completion
 
 def temp_sleep(seconds=0.1):
   time.sleep(seconds)
 
 def ChatGPT_single_request(prompt): 
   temp_sleep()
-
-  completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
-  )
-  return completion["choices"][0]["message"]["content"]
+  return safe_chat_completion(prompt) or "ChatGPT ERROR"
 
 
 # ============================================================================
@@ -43,17 +37,7 @@ def GPT4_request(prompt):
     a str of GPT-3's response. 
   """
   temp_sleep()
-
-  try: 
-    completion = openai.ChatCompletion.create(
-    model="gpt-4", 
-    messages=[{"role": "user", "content": prompt}]
-    )
-    return completion["choices"][0]["message"]["content"]
-  
-  except: 
-    print ("ChatGPT ERROR")
-    return "ChatGPT ERROR"
+  return safe_chat_completion(prompt) or "ChatGPT ERROR"
 
 
 def ChatGPT_request(prompt): 
@@ -68,17 +52,8 @@ def ChatGPT_request(prompt):
   RETURNS: 
     a str of GPT-3's response. 
   """
-  # temp_sleep()
-  try: 
-    completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
-    )
-    return completion["choices"][0]["message"]["content"]
-  
-  except: 
-    print ("ChatGPT ERROR")
-    return "ChatGPT ERROR"
+  temp_sleep()
+  return safe_chat_completion(prompt) or "ChatGPT ERROR"
 
 
 def GPT4_safe_generate_response(prompt, 
