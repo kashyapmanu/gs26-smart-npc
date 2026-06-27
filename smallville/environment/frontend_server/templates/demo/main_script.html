@@ -1,5 +1,6 @@
 {% load staticfiles %}
 
+<script src="/static/assets/js/player_controller.js"></script>
 <script type="text/javascript">
 	/*
 	  Main resources: 
@@ -328,6 +329,7 @@
 		    frameRate: 4,
 		    repeat: -1 });
 	  }
+	  if (window.SmartNPCPlayer) { window.SmartNPCPlayer.init(this); }
 	}
 
 
@@ -366,6 +368,8 @@
 	  if (cursors.down.isDown) {
 	    player.body.setVelocityY(camera_speed);
 	  }
+
+	  if (window.SmartNPCPlayer) { window.SmartNPCPlayer.update(this, player); }
 
 	  
 	  let curr_focused_persona = document.getElementById("temp_focus").textContent;
