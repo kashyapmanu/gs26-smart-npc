@@ -30,6 +30,17 @@
     window.SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";
   </script>
   <script src='https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js'></script>
+  <script>
+    (async function () {
+      try {
+        const r = await fetch("/static/demo_data/hotspots.json");
+        window.SMART_NPC_HOTSPOTS = await r.json();
+      } catch (e) {
+        console.warn("smart-npc: could not load hotspots", e);
+        window.SMART_NPC_HOTSPOTS = [];
+      }
+    })();
+  </script>
   <script src="{% static 'assets/js/smart_npc_game.js' %}"></script>
   <script src="{% static 'assets/js/player_controller.js' %}"></script>
   <script src="{% static 'assets/js/feed_overlay.js' %}"></script>
