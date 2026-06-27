@@ -83,26 +83,22 @@
     map.createLayer("Wall", [CuteRPG_Field_C, walls], 0, 0);
     map.createLayer("Interior Furniture L1", tileset_group_1, 0, 0);
     map.createLayer("Interior Furniture L2 ", tileset_group_1, 0, 0);
-    map.createLayer("Foreground L1", tileset_group_1, 0, 0);
-    map.createLayer("Foreground L2", tileset_group_1, 0, 0);
-
-    const collisionsLayer = map.createLayer("Collisions", collisions, 0, 0);
-    collisionsLayer.setCollisionByProperty({ collide: true });
-    collisionsLayer.setDepth(-1);
-
     const foregroundL1Layer = map.createLayer("Foreground L1", tileset_group_1, 0, 0);
     const foregroundL2Layer = map.createLayer("Foreground L2", tileset_group_1, 0, 0);
     foregroundL1Layer.setDepth(2);
     foregroundL2Layer.setDepth(2);
+
+    const collisionsLayer = map.createLayer("Collisions", collisions, 0, 0);
+    collisionsLayer.setCollisionByProperty({ collide: true });
+    collisionsLayer.setDepth(-1);
 
     // Player sprite
     const player = this.physics.add
       .sprite(2400, 588, "atlas", "down")
       .setSize(30, 40)
       .setOffset(0, 0);
-    player.setDepth(1);
+    player.setDepth(-1);
     player.setCollideWorldBounds(true);
-    this.physics.add.collider(player, collisionsLayer);
 
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
