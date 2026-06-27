@@ -1,0 +1,32 @@
+#smart-npc-feed {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 320px;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: rgba(20, 20, 28, 0.86);
+  color: #f4f4f4;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  z-index: 100;
+  box-shadow: 0 4px 18px rgba(0,0,0,.4);
+}
+#smart-npc-feed .header {
+  font-weight: 700;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 4px;
+}
+#smart-npc-feed .post {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border-left: 3px solid #5fd1a8;
+  background: rgba(255,255,255,.04);
+}
+#smart-npc-feed .post .author { color: #5fd1a8; font-weight: 600; }
+#smart-npc-feed .post .reach  { color: #c7a36a; margin-left: 6px; }
+#smart-npc-feed .warn { color: #ff8b8b; font-style: italic; }

@@ -144,6 +144,14 @@
 		});
 	{% endfor %}
 </script>
+
+<link rel="stylesheet" href="/static/css/feed_overlay.css">
+<script src="/static/assets/js/feed_overlay.js"></script>
+<script>
+	window.addEventListener("load", function () {
+		if (window.SmartNPCFeed) { window.SmartNPCFeed.start(); }
+	});
+</script>
 {% endblock js_content %}
 
 
