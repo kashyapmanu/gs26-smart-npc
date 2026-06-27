@@ -1,7 +1,7 @@
 // Smart NPCs: live social-feed overlay. Subscribes to /feed/stream (SSE) and
 // renders posts with a reach counter. Pure display — no game logic.
 (function () {
-  const API = window.SMART_NPC_API || "http://localhost:8000";
+  const API = window.SMART_NPC_API || "http://localhost:8001";
   let started = false;
 
   function ensurePanel() {

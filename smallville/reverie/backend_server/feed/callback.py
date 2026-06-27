@@ -8,12 +8,17 @@ from llm_config import safe_chat_completion
 def maybe_refuse_payment_line(owner_memory, *, event: WorldEvent) -> Optional[str]:
     """If `owner_memory` recalls the rescue observation, generate an LLM line
     grounded in the event. Otherwise return None (caller falls back to a
-    generic transaction)."""
+    generic transaction).
+
+    Reads `owner_memory.seq_event` (a list of upstream ConceptNode objects
+    with a `.description` attribute), matching upstream AssociativeMemory.
+    """
     recollects = False
     try:
-        evs = owner_memory.events()
-        for e in evs:
-            text = (e.get("event") if isinstance(e, dict) else str(e)).lower()
+        seq = getattr(owner_memory, "seq_event", None) or []
+        for node in seq:
+            desc = getattr(node, "description", "") or ""
+            text = desc.lower()
             if "rescued" in text and "fire" in text:
                 recollects = True
                 break

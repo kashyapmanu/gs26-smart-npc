@@ -24,18 +24,18 @@ def test_rescue_propagates_to_market_by_max_t():
 
     # No retweets yet -> should not reach market naturally
     assert reaches_by(fs, rescue_post_id, npc_audience="market",
-                      distance=99, t=0.0, max_t=1.0, spread_per_tick=0) is False
+                      max_t=1.0) is False
 
     # Simulate propagation: family NPC (residential audience) retweets
     fs.retweet(rescue_post_id, author="family_npc", ts=0.5, audience="residential")
     # Still not market-reached
     assert reaches_by(fs, rescue_post_id, npc_audience="market",
-                      distance=99, t=0.5, max_t=1.0, spread_per_tick=0) is False
+                      max_t=1.0) is False
 
     # Promotion kicks in: by sim time 1.0, post audience promoted to town
     compute_promotions(fs, target_audience="town", by_ts=1.0)
     assert reaches_by(fs, rescue_post_id, npc_audience="market",
-                      distance=99, t=1.0, max_t=2.0, spread_per_tick=0) is True
+                      max_t=2.0) is True
 
 
 def _get_internal_feed() -> FeedService:

@@ -3,7 +3,7 @@
 // keys). Adds WASD as supplementary movement keys and posts actions when
 // the player centre enters configured hotspots.
 (function () {
-  const SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8000";
+  const SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";
 
   // Per-hotspot "already fired in this dwell" guard. Reset when player
   // leaves the hotspot radius.

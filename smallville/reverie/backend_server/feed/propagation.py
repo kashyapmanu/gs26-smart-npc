@@ -3,17 +3,9 @@ from feed.feed_service import FeedService
 
 
 def reaches_by(fs: FeedService, post_id: str, *, npc_audience: str,
-               distance: int, t: float, max_t: float,
-               spread_per_tick: int = 1) -> bool:
+               max_t: float) -> bool:
     """Pure query: would post `post_id` have reached an NPC of `npc_audience`
-    by time `max_t`, given retweets so far at t?
-
-    Reach model: a post reaches an NPC if either
-      (a) the post's current audience covers them (town covers all; residential
-          covers residential; market covers market), OR
-      (b) at least one retweet targeting `npc_audience` exists by time max_t.
-    `t` is the current sim time (used to clamp retweets we count).
-    """
+    by time `max_t`?"""
     p = fs.get_post(post_id)
     if p is None:
         return False

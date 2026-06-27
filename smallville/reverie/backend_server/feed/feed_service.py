@@ -35,8 +35,7 @@ class FeedService:
             return self._posts.get(post_id)
 
     def list_posts(self, *, audience: Optional[str] = None,
-                   since: Optional[float] = None,
-                   npc_id: Optional[str] = None) -> List[Post]:
+                   since: Optional[float] = None) -> List[Post]:
         with self._lock:
             out = []
             for pid in self._order:

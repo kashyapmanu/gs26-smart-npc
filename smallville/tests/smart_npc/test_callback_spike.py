@@ -1,5 +1,4 @@
 import os
-
 import pytest
 
 from feed.callback import maybe_refuse_payment_line
@@ -9,12 +8,14 @@ from feed.models import WorldEvent
 pytestmark = pytest.mark.slow
 
 
+class _FakeNode:
+    def __init__(self, description: str):
+        self.description = description
+
+
 class FakeMem:
     def __init__(self):
-        pass
-
-    def events(self):
-        return [{"event": "player rescued a girl from a fire"}]
+        self.seq_event = [_FakeNode("player rescued a girl from a fire")]
 
 
 def test_callback_line_references_rescue():
