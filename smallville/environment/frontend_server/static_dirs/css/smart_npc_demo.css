@@ -1,0 +1,131 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+#game-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#game-container canvas {
+  display: block;
+}
+
+.floating-btn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 101;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #5fd1a8;
+  background: rgba(20, 20, 28, 0.92);
+  color: #5fd1a8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#smart-npc-feed {
+  position: fixed;
+  top: 50px;
+  right: 12px;
+  width: 340px;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: rgba(20, 20, 28, 0.92);
+  color: #f4f4f4;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 100;
+  box-shadow: 0 4px 18px rgba(0,0,0,.4);
+}
+#smart-npc-feed.hidden { display: none; }
+#smart-npc-feed .header {
+  font-weight: 700;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#smart-npc-feed .post {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border-left: 3px solid #5fd1a8;
+  background: rgba(255,255,255,.04);
+  border-radius: 0 4px 4px 0;
+}
+#smart-npc-feed .post .author { color: #5fd1a8; font-weight: 600; }
+#smart-npc-feed .post .reach  { color: #c7a36a; margin-left: 6px; }
+#smart-npc-feed .warn { color: #ff8b8b; font-style: italic; }
+#smart-npc-feed .empty {
+  color: #aaa;
+  font-style: italic;
+  text-align: center;
+  padding: 8px;
+}
+#smart-npc-propagate {
+  font-size: 11px;
+  padding: 4px 8px;
+  border: 1px solid #5fd1a8;
+  background: rgba(95, 209, 168, 0.15);
+  color: #5fd1a8;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#smart-npc-propagate:disabled { opacity: 0.5; cursor: default; }
+
+#smart-npc-help {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  width: 260px;
+  background: rgba(20, 20, 28, 0.92);
+  color: #f4f4f4;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 14px;
+  z-index: 100;
+  box-shadow: 0 4px 18px rgba(0,0,0,.4);
+}
+#smart-npc-help.collapsed #help-body { display: none; }
+#smart-npc-help .help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+#smart-npc-help .help-header strong { color: #5fd1a8; }
+#help-toggle {
+  background: #333;
+  color: #f4f4f4;
+  border: none;
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+#smart-npc-help ol {
+  margin: 0 0 0 18px;
+  padding: 0;
+  line-height: 1.6;
+}
+#smart-npc-help li { margin-bottom: 6px; }
+#smart-npc-help .key {
+  background: #333;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: ui-monospace, Menlo, monospace;
+}
