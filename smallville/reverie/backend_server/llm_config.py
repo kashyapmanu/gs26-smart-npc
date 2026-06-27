@@ -5,7 +5,7 @@ from typing import Optional
 try:
     from openai import OpenAI
 except ImportError:
-    OpenAI = None  # allow tests without SDK installed
+    OpenAI = None  # LLM SDK import is required for production; tests install it explicitly.
 
 MESHAPI_BASE_URL = "https://api.meshapi.ai/v1"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -24,7 +24,13 @@ def _fallback_obj():
 
 @lru_cache(maxsize=1)
 def get_llm_client(use_fallback: bool = False):
-    """Return an OpenAI-compatible client. MeshAPI primary, OpenRouter fallback."""
+    """Return an OpenAI-compatible client. MeshAPI primary, OpenRouter fallback.
+
+    Note: the LRU cache means whichever client succeeds first is kept for the
+    process lifetime. Intentional — once a provider is known-good it stays —
+    but transient primary failures will sticky-switch to OpenRouter. Tests
+    should call `get_llm_client.cache_clear()` when swapping client factories.
+    """
     try:
         if not use_fallback:
             return _primary_obj()
@@ -39,7 +45,6 @@ def safe_chat_completion(prompt: str, *, model: Optional[str] = None, max_tokens
     Returns the assistant text. On total failure returns "" (empty string), so
     callers can degrade gracefully without raising.
     """
-    text = ""
     for use_fb in (False, True):
         try:
             client = get_llm_client(use_fallback=use_fb)
@@ -50,6 +55,6 @@ def safe_chat_completion(prompt: str, *, model: Optional[str] = None, max_tokens
                 max_tokens=max_tokens,
             )
             return completion.choices[0].message.content or ""
-        except Exception as exc:  # noqa: BLE001
-            text = f"{exc}"
+        except Exception:  # noqa: BLE001
+            pass
     return ""
