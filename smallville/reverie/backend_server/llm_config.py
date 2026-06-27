@@ -13,7 +13,7 @@ except ImportError:
 try:
     from dotenv import load_dotenv
 
-    _ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
+    _ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
     load_dotenv(_ENV_PATH, override=False)
 except Exception:  # noqa: BLE001
     pass  # dotenv optional; tests/stubs run without it.
