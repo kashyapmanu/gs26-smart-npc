@@ -40,3 +40,35 @@ def test_mournful_line_grounds_in_fact(monkeypatch):
     maybe_mournful_line(event=OrderEvent())
     assert "no one helped" in captured["prompt"].lower()
     assert "fire" in captured["prompt"].lower()
+
+
+from fastapi.testclient import TestClient
+from smart_npc_api import app
+
+client = TestClient(app)
+
+
+def test_order_food_happy_when_rescue_exists():
+    client.post("/demo/reset")
+    client.post("/player/action", json={"type": "rescue_person", "where": "fire_house", "t": 1.0})
+    r = client.post("/player/action", json={"type": "order_food", "where": "restaurant", "t": 2.0})
+    assert r.status_code == 200
+    posts = client.get("/feed").json()["posts"]
+    assert any("niece" in p["text"].lower() and "saved" in p["text"].lower() for p in posts) or \
+           any("rescued" in p["text"].lower() for p in posts)
+
+
+def test_order_food_sad_when_no_rescue():
+    client.post("/demo/reset")
+    r = client.post("/player/action", json={"type": "order_food", "where": "restaurant", "t": 1.0})
+    assert r.status_code == 200
+    posts = client.get("/feed").json()["posts"]
+    assert any("no one helped" in p["text"].lower() or "niece" in p["text"].lower() for p in posts)
+
+
+def test_demo_reset_clears_events_and_feed():
+    client.post("/player/action", json={"type": "rescue_person", "where": "fire_house", "t": 1.0})
+    r = client.post("/demo/reset")
+    assert r.status_code == 200
+    assert client.get("/events").json()["events"] == []
+    assert client.get("/feed").json()["posts"] == []

@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from feed.callback import maybe_refuse_payment_line
+from feed.callback import maybe_mournful_line, maybe_refuse_payment_line
 from feed.event_service import PlayerEventService
 from feed.feed_service import FeedService
 
@@ -69,17 +69,26 @@ class ActionIn(BaseModel):
 @app.post("/player/action")
 def post_action(action: ActionIn):
     ev = _events.handle_action({"type": action.type, "where": action.where}, t=action.t)
+
     if action.type == "order_food":
-        line = maybe_refuse_payment_line(event=ev)
-        if line:
-            # Surface the LLM line as a feed post authored by the restaurant
-            # owner. The feed overlay (frontend) will render it live.
+        prior_rescues = [e for e in _events.list_events() if e.verb == "rescued"]
+        if prior_rescues:
+            line = maybe_refuse_payment_line(event=prior_rescues[-1])
             _feed.create_post(
                 author="restaurant owner",
-                text=line,
+                text=line or "Your meal is on me — you rescued my niece today.",
                 ts=action.t,
                 audience="town",
             )
+        else:
+            line = maybe_mournful_line(event=ev)
+            _feed.create_post(
+                author="restaurant owner",
+                text=line or "I can't offer you a discount today... my niece was in that fire.",
+                ts=action.t,
+                audience="town",
+            )
+
     return ev.to_dict()
 
 
@@ -105,6 +114,16 @@ async def stream_feed():
                 yield f"data: {json.dumps(p.to_dict())}\n\n"
             await asyncio.sleep(0.5)
     return StreamingResponse(gen(), media_type="text/event-stream")
+
+
+@app.post("/demo/reset")
+def demo_reset():
+    """Clear all demo state and prepare for a fresh run."""
+    _feed.clear()
+    _events.clear()
+    _owner_memory.seq_event.clear()
+    _owner_memory.feed_inbox.clear()
+    return {"status": "reset"}
 
 
 # In-process orchestrator launcher. The orchestrator shares this process's
