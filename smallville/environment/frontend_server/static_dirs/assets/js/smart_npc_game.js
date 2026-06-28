@@ -61,7 +61,6 @@
 
     // Store references on the scene for update()
     this._snPlayer = player;
-    this._snSpawn = SPAWN;
 
     window.SmartNPCGame.resetPlayer = () => {
       if (player && player.body) {

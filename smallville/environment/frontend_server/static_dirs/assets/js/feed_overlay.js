@@ -5,6 +5,7 @@
   const API = window.SMART_NPC_API || "http://localhost:8001";
   let started = false;
   let es = null;
+  let toggleBtn = null;
 
   function ensurePanel() {
     let p = document.getElementById("smart-npc-feed");
@@ -78,34 +79,39 @@
     if (started) return;
     started = true;
     const panel = ensurePanel();
-    try {
-      es = new EventSource(API + "/feed/stream");
-    } catch (e) {
-      renderWarn(panel, "EventSource not supported; feed overlay disabled");
-      started = false;
-      return;
+
+    function connect() {
+      try {
+        es = new EventSource(API + "/feed/stream");
+      } catch (e) {
+        renderWarn(panel, "EventSource not supported; feed overlay disabled");
+        started = false;
+        return;
+      }
+      es.onmessage = function (m) {
+        try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
+      };
+      es.onerror = onError;
     }
-    es.onmessage = function (m) {
-      try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
-    };
-    es.onerror = function () {
+
+    function onError() {
       if (!started) return;
       renderWarn(panel, "feed stream interrupted — retrying...");
       es.close();
       setTimeout(function () {
         if (!started) return;
-        try { es = new EventSource(API + "/feed/stream"); } catch (e) { return; }
-        es.onmessage = function (m) {
-          try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
-        };
+        connect();
       }, 2000);
-    };
+    }
+
+    connect();
   }
 
   window.SmartNPCFeed = {
     attachToggle: function (buttonId) {
       const btn = document.getElementById(buttonId);
       if (!btn) return;
+      toggleBtn = btn;
       btn.addEventListener("click", function () {
         const panel = ensurePanel();
         const hidden = panel.classList.contains("hidden");
@@ -130,6 +136,7 @@
       }
       const panel = document.getElementById("smart-npc-feed");
       if (panel) {
+        panel.classList.add("hidden");
         panel.querySelectorAll(".post, .warn").forEach(function (el) { el.remove(); });
         if (!panel.querySelector(".empty")) {
           const empty = document.createElement("div");
@@ -137,6 +144,9 @@
           empty.textContent = "Walk into the burning house (left) to seed the first post.";
           panel.appendChild(empty);
         }
+      }
+      if (toggleBtn && toggleBtn.textContent === "Close Feed") {
+        toggleBtn.textContent = "Town Feed";
       }
       const btn = document.getElementById("smart-npc-propagate");
       if (btn) {
