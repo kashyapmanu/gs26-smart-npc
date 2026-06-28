@@ -4,6 +4,7 @@
   "infinite": false,
   "layers": [
     {
+      "id": 1,
       "name": "Ground",
       "width": 50,
       "height": 35,
@@ -1766,6 +1767,7 @@
       ]
     },
     {
+      "id": 2,
       "name": "Buildings",
       "width": 50,
       "height": 35,
@@ -3528,6 +3530,7 @@
       ]
     },
     {
+      "id": 3,
       "name": "Decoration",
       "width": 50,
       "height": 35,

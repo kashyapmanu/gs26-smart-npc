@@ -16,11 +16,12 @@ PALETTE = {
 W, H = 50, 35
 
 
-def fill(layer_name, default_gid, patch_fn=None):
+def fill(layer_name, layer_id, default_gid, patch_fn=None):
     data = [default_gid] * (W * H)
     if patch_fn:
         patch_fn(data)
     return {
+        "id": layer_id,
         "name": layer_name,
         "width": W,
         "height": H,
@@ -65,9 +66,9 @@ def decor_patch(data):
 
 
 layers = [
-    fill("Ground", PALETTE["grass"], street_patch),
-    fill("Buildings", 0, building_patch),
-    fill("Decoration", 0, decor_patch),
+    fill("Ground", 1, PALETTE["grass"], street_patch),
+    fill("Buildings", 2, 0, building_patch),
+    fill("Decoration", 3, 0, decor_patch),
 ]
 
 # Tilesets: use the full CuteRPG_Field_B entry from the_ville_jan7.json so Phaser
@@ -108,5 +109,5 @@ map_doc = {
 }
 
 out = Path(__file__).with_name("focused_demo.json")
-out.write_text(json.dumps(map_doc, indent=2))
+out.write_text(json.dumps(map_doc, indent=2) + "\n")
 print(f"wrote {out}")
