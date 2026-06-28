@@ -49,9 +49,14 @@
     buildingsLayer.setDepth(1);
     decorationLayer.setDepth(2);
 
+    // Dedicated circular texture for fire particles
+    const fireGfx = this.make.graphics({ x: 0, y: 0, add: false });
+    fireGfx.fillStyle(0xffffff);
+    fireGfx.fillCircle(4, 4, 4);
+    fireGfx.generateTexture("fire-particle", 8, 8);
+
     // Fire glow overlay on the burning house (left side)
-    const fireEmitter = this.add.particles("atlas", {
-      frame: "down",
+    const fireEmitter = this.add.particles("fire-particle", {
       x: 288,
       y: 560,
       speed: { min: -30, max: 30 },
@@ -93,10 +98,10 @@
       const npc = this.physics.add.sprite(wx, 640, "atlas", "down");
       npc.setDepth(1);
       npc.body.setCollideWorldBounds(true);
+      npc.nextWander = 0;
       wanderers.push(npc);
     }
     this._snWanderers = wanderers;
-    this._snNextWander = 0;
 
     window.SmartNPCGame.resetPlayer = () => {
       if (player && player.body) {
@@ -153,15 +158,24 @@
   }
 
   function updateWanderers(scene, time) {
-    if (!scene._snWanderers || time < scene._snNextWander) return;
-    scene._snNextWander = time + 1000;
+    if (!scene._snWanderers) return;
     for (const npc of scene._snWanderers) {
+      if (time < npc.nextWander) continue;
+      npc.nextWander = time + Phaser.Math.Between(800, 1500);
+
       const speed = 60;
       const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
-      npc.body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
-      const anim = Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))
-        ? (Math.cos(angle) > 0 ? "walk-right" : "walk-left")
-        : (Math.sin(angle) > 0 ? "walk-down" : "walk-up");
+      let vx = Math.cos(angle) * speed;
+      let vy = Math.sin(angle) * speed;
+
+      // Keep wanderers roughly on the road (y ≈ 640 ± 20)
+      if (npc.y < 620) vy = Math.abs(vy);
+      else if (npc.y > 660) vy = -Math.abs(vy);
+
+      npc.body.setVelocity(vx, vy);
+      const anim = Math.abs(vx) > Math.abs(vy)
+        ? (vx > 0 ? "walk-right" : "walk-left")
+        : (vy > 0 ? "walk-down" : "walk-up");
       npc.play(anim, true);
     }
   }
