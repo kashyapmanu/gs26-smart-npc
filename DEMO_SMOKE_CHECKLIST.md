@@ -40,3 +40,16 @@ If any item fails and cannot be fixed in 2 minutes, switch to the fallback reel.
 
 ## Failure Mode
 - [ ] If LLM fails (both providers): feed overlay shows a warning badge (`feed stream interrupted — retrying...`) and the demo cued reel (see `smallville/demo_data/fallback_reel/README.md`)
+
+### Focused demo stage — /smart-npc-demo/
+
+- [ ] Page loads full-screen, no scrollbars, no Smallville replay UI.
+- [ ] Player sprite is visible near the center and walks in 4 directions with animation.
+- [ ] Camera stays inside the small stage; no empty-space edges.
+- [ ] Walking left into the fire triggers `POST /player/action {type: "rescue_person"}`.
+- [ ] Feed panel shows a positive rescue post.
+- [ ] Walking right into the restaurant triggers `POST /player/action {type: "order_food"}`.
+- [ ] Restaurant owner says a grateful / free-food callback line.
+- [ ] Press `R` → player respawns center, `/demo/reset` returns 200, feed clears.
+- [ ] Walk straight to the restaurant without rescuing → owner says a sad / no-discount callback line.
+- [ ] Old `/demo/.../` URL still works as before.

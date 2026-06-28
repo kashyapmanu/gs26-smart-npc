@@ -4,13 +4,13 @@ from pathlib import Path
 # Palette of gids from Smallville tilesets. These are final-tuned visually
 # in Task 8; start with plausible values from the existing the_ville map.
 PALETTE = {
-    "grass": 1,
-    "road": 2,
-    "house_wall": 3,
-    "house_roof": 4,
-    "restaurant_wall": 5,
-    "restaurant_roof": 6,
-    "tree": 7,
+    "grass": 65,
+    "road": 17,
+    "house_wall": 33,
+    "house_roof": 81,
+    "restaurant_wall": 145,
+    "restaurant_roof": 161,
+    "tree": 151,
 }
 
 W, H = 50, 35
