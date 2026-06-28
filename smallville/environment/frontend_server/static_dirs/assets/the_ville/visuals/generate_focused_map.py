@@ -34,8 +34,8 @@ def fill(layer_name, default_gid, patch_fn=None):
 
 
 def street_patch(data):
-    # Horizontal street across the middle (tiles y=20..22)
-    for y in range(20, 23):
+    # Horizontal street across the true middle of the 35-row map (tiles y=16..18)
+    for y in range(16, 19):
         for x in range(W):
             data[y * W + x] = PALETTE["road"]
 
@@ -70,9 +70,23 @@ layers = [
     fill("Decoration", 0, decor_patch),
 ]
 
-# Tilesets: embed a minimal set that the existing smart_npc_game.js already loads.
+# Tilesets: use the full CuteRPG_Field_B entry from the_ville_jan7.json so Phaser
+# can load the tileset image correctly.
 tilesets = [
-    {"firstgid": 1, "name": "CuteRPG_Field_B", "tilewidth": 32, "tileheight": 32},
+    {
+        "columns": 16,
+        "firstgid": 1,
+        "image": "map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Field_B.png",
+        "imageheight": 512,
+        "imagewidth": 512,
+        "margin": 0,
+        "name": "CuteRPG_Field_B",
+        "spacing": 0,
+        "tilecount": 256,
+        "tileheight": 32,
+        "tilewidth": 32,
+        "transparentcolor": "#ff00ff",
+    },
 ]
 
 map_doc = {
