@@ -18,7 +18,7 @@ def maybe_refuse_payment_line(*, event: WorldEvent) -> Optional[str]:
     return safe_chat_completion(prompt) or None
 
 
-def maybe_mournful_line(*, event) -> Optional[str]:
+def maybe_mournful_line(*, event: WorldEvent) -> Optional[str]:
     """Generate the sad owner line when the child was harmed because the player
     did not rescue her. The event argument is the order_food event; the prompt
     supplies the un-grounded fact that no one helped."""

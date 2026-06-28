@@ -36,8 +36,7 @@ class _StubNode:
 
 class _StubOwnerMemory:
     """Minimal stand-in for upstream AssociativeMemory when running the
-    Smart NPCs demo without the full ReverieServer. Exposes `seq_event`
-    (consumed by feed.callback.maybe_refuse_payment_line) and `feed_inbox`
+    Smart NPCs demo without the full ReverieServer. Exposes `feed_inbox`
     (consumed by feed.feed_inbox.deliver_to_inbox's idempotency check)."""
 
     def __init__(self) -> None:
