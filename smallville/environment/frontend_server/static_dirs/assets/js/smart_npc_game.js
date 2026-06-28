@@ -25,25 +25,11 @@
   }
 
   function preload() {
-    // Tilesets (same paths as smallville/environment/frontend_server/templates/demo/main_script.html)
-    this.load.image("blocks_1", "/static/assets/the_ville/visuals/map_assets/blocks/blocks_1.png");
-    this.load.image("walls", "/static/assets/the_ville/visuals/map_assets/v1/Room_Builder_32x32.png");
-    this.load.image("interiors_pt1", "/static/assets/the_ville/visuals/map_assets/v1/interiors_pt1.png");
-    this.load.image("interiors_pt2", "/static/assets/the_ville/visuals/map_assets/v1/interiors_pt2.png");
-    this.load.image("interiors_pt3", "/static/assets/the_ville/visuals/map_assets/v1/interiors_pt3.png");
-    this.load.image("interiors_pt4", "/static/assets/the_ville/visuals/map_assets/v1/interiors_pt4.png");
-    this.load.image("interiors_pt5", "/static/assets/the_ville/visuals/map_assets/v1/interiors_pt5.png");
+    // Tileset used by the focused demo map
     this.load.image("CuteRPG_Field_B", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Field_B.png");
-    this.load.image("CuteRPG_Field_C", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Field_C.png");
-    this.load.image("CuteRPG_Harbor_C", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Harbor_C.png");
-    this.load.image("CuteRPG_Village_B", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Village_B.png");
-    this.load.image("CuteRPG_Forest_B", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Forest_B.png");
-    this.load.image("CuteRPG_Desert_C", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Desert_C.png");
-    this.load.image("CuteRPG_Mountains_B", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Mountains_B.png");
-    this.load.image("CuteRPG_Desert_B", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Desert_B.png");
-    this.load.image("CuteRPG_Forest_C", "/static/assets/the_ville/visuals/map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Forest_C.png");
 
-    this.load.tilemapTiledJSON("map", "/static/assets/the_ville/visuals/the_ville_jan7.json");
+    // Focused demo tilemap
+    this.load.tilemapTiledJSON("map", "/static/assets/the_ville/visuals/focused_demo.json");
 
     // Player atlas
     this.load.atlas("atlas", "/static/assets/characters/Yuriko_Yamamoto.png", "/static/assets/characters/atlas.json");
@@ -52,53 +38,50 @@
   function create() {
     const map = this.make.tilemap({ key: "map" });
 
-    const collisions = map.addTilesetImage("blocks", "blocks_1");
-    const walls = map.addTilesetImage("Room_Builder_32x32", "walls");
-    const interiors_pt1 = map.addTilesetImage("interiors_pt1", "interiors_pt1");
-    const interiors_pt2 = map.addTilesetImage("interiors_pt2", "interiors_pt2");
-    const interiors_pt3 = map.addTilesetImage("interiors_pt3", "interiors_pt3");
-    const interiors_pt4 = map.addTilesetImage("interiors_pt4", "interiors_pt4");
-    const interiors_pt5 = map.addTilesetImage("interiors_pt5", "interiors_pt5");
-    const CuteRPG_Field_B = map.addTilesetImage("CuteRPG_Field_B", "CuteRPG_Field_B");
-    const CuteRPG_Field_C = map.addTilesetImage("CuteRPG_Field_C", "CuteRPG_Field_C");
-    const CuteRPG_Harbor_C = map.addTilesetImage("CuteRPG_Harbor_C", "CuteRPG_Harbor_C");
-    const CuteRPG_Village_B = map.addTilesetImage("CuteRPG_Village_B", "CuteRPG_Village_B");
-    const CuteRPG_Forest_B = map.addTilesetImage("CuteRPG_Forest_B", "CuteRPG_Forest_B");
-    const CuteRPG_Desert_C = map.addTilesetImage("CuteRPG_Desert_C", "CuteRPG_Desert_C");
-    const CuteRPG_Mountains_B = map.addTilesetImage("CuteRPG_Mountains_B", "CuteRPG_Mountains_B");
-    const CuteRPG_Desert_B = map.addTilesetImage("CuteRPG_Desert_B", "CuteRPG_Desert_B");
-    const CuteRPG_Forest_C = map.addTilesetImage("CuteRPG_Forest_C", "CuteRPG_Forest_C");
+    const fieldB = map.addTilesetImage("CuteRPG_Field_B", "CuteRPG_Field_B");
 
-    const tileset_group_1 = [
-      CuteRPG_Field_B, CuteRPG_Field_C, CuteRPG_Harbor_C, CuteRPG_Village_B,
-      CuteRPG_Forest_B, CuteRPG_Desert_C, CuteRPG_Mountains_B, CuteRPG_Desert_B, CuteRPG_Forest_C,
-      interiors_pt1, interiors_pt2, interiors_pt3, interiors_pt4, interiors_pt5, walls
-    ];
+    // Layers from focused_demo.json
+    const groundLayer = map.createLayer("Ground", fieldB, 0, 0);
+    const buildingsLayer = map.createLayer("Buildings", fieldB, 0, 0);
+    const decorationLayer = map.createLayer("Decoration", fieldB, 0, 0);
 
-    map.createLayer("Bottom Ground", tileset_group_1, 0, 0);
-    map.createLayer("Exterior Ground", tileset_group_1, 0, 0);
-    map.createLayer("Exterior Decoration L1", tileset_group_1, 0, 0);
-    map.createLayer("Exterior Decoration L2", tileset_group_1, 0, 0);
-    map.createLayer("Interior Ground", tileset_group_1, 0, 0);
-    map.createLayer("Wall", [CuteRPG_Field_C, walls], 0, 0);
-    map.createLayer("Interior Furniture L1", tileset_group_1, 0, 0);
-    map.createLayer("Interior Furniture L2 ", tileset_group_1, 0, 0);
-    const foregroundL1Layer = map.createLayer("Foreground L1", tileset_group_1, 0, 0);
-    const foregroundL2Layer = map.createLayer("Foreground L2", tileset_group_1, 0, 0);
-    foregroundL1Layer.setDepth(2);
-    foregroundL2Layer.setDepth(2);
+    groundLayer.setDepth(0);
+    buildingsLayer.setDepth(1);
+    decorationLayer.setDepth(2);
 
-    const collisionsLayer = map.createLayer("Collisions", collisions, 0, 0);
-    collisionsLayer.setCollisionByProperty({ collide: true });
-    collisionsLayer.setDepth(-1);
-
-    // Player sprite
+    // Player sprite — visible above ground (depth 1), below foreground decoration (depth 2)
     const player = this.physics.add
-      .sprite(2400, 588, "atlas", "down")
+      .sprite(800, 640, "atlas", "down")
       .setSize(30, 40)
       .setOffset(0, 0);
-    player.setDepth(-1);
+    player.setDepth(1);
     player.setCollideWorldBounds(true);
+
+    // Walk animations
+    this.anims.create({
+      key: "walk-down",
+      frames: this.anims.generateFrameNames("atlas", { prefix: "down-walk.", start: 0, end: 3, zeroPad: 3 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "walk-up",
+      frames: this.anims.generateFrameNames("atlas", { prefix: "up-walk.", start: 0, end: 3, zeroPad: 3 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "walk-left",
+      frames: this.anims.generateFrameNames("atlas", { prefix: "left-walk.", start: 0, end: 3, zeroPad: 3 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "walk-right",
+      frames: this.anims.generateFrameNames("atlas", { prefix: "right-walk.", start: 0, end: 3, zeroPad: 3 }),
+      frameRate: 10,
+      repeat: -1,
+    });
 
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
@@ -110,13 +93,33 @@
       window.SmartNPCPlayer.init(this, player);
     }
 
-    // Store references on the scene for update()
     this._snPlayer = player;
   }
 
   function update(time, delta) {
     if (window.SmartNPCPlayer && this._snPlayer) {
       window.SmartNPCPlayer.update(this, this._snPlayer);
+    }
+    updatePlayerAnimation(this._snPlayer);
+  }
+
+  function updatePlayerAnimation(player) {
+    if (!player || !player.body) return;
+    const vx = player.body.velocity.x;
+    const vy = player.body.velocity.y;
+    const moving = Math.abs(vx) > 1 || Math.abs(vy) > 1;
+    if (!moving) {
+      player.anims.stop();
+      return;
+    }
+    let anim = null;
+    if (Math.abs(vx) > Math.abs(vy)) {
+      anim = vx > 0 ? "walk-right" : "walk-left";
+    } else {
+      anim = vy > 0 ? "walk-down" : "walk-up";
+    }
+    if (player.anims.currentAnim?.key !== anim) {
+      player.play(anim);
     }
   }
 
