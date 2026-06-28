@@ -4,6 +4,7 @@
 (function () {
   const API = window.SMART_NPC_API || "http://localhost:8001";
   let started = false;
+  let es = null;
 
   function ensurePanel() {
     let p = document.getElementById("smart-npc-feed");
@@ -77,20 +78,22 @@
     if (started) return;
     started = true;
     const panel = ensurePanel();
-    let es;
     try {
       es = new EventSource(API + "/feed/stream");
     } catch (e) {
       renderWarn(panel, "EventSource not supported; feed overlay disabled");
+      started = false;
       return;
     }
     es.onmessage = function (m) {
       try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
     };
     es.onerror = function () {
+      if (!started) return;
       renderWarn(panel, "feed stream interrupted — retrying...");
       es.close();
       setTimeout(function () {
+        if (!started) return;
         try { es = new EventSource(API + "/feed/stream"); } catch (e) { return; }
         es.onmessage = function (m) {
           try { renderPost(panel, JSON.parse(m.data)); } catch (e) { /* ignore */ }
@@ -118,6 +121,28 @@
     },
     start: function () {
       startStream();
+    },
+    clear: function () {
+      started = false;
+      if (es) {
+        es.close();
+        es = null;
+      }
+      const panel = document.getElementById("smart-npc-feed");
+      if (panel) {
+        panel.querySelectorAll(".post, .warn").forEach(function (el) { el.remove(); });
+        if (!panel.querySelector(".empty")) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "Walk into the burning house (left) to seed the first post.";
+          panel.appendChild(empty);
+        }
+      }
+      const btn = document.getElementById("smart-npc-propagate");
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Spread the word";
+      }
     }
   };
 })();

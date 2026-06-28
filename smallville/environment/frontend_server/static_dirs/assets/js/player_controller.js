@@ -13,7 +13,11 @@
 
   async function onReset() {
     try {
-      await fetch(`${SMART_NPC_API}/demo/reset`, { method: "POST" });
+      const response = await fetch(`${SMART_NPC_API}/demo/reset`, { method: "POST" });
+      if (!response.ok) {
+        console.warn("smart-npc reset failed: HTTP " + response.status);
+        return;
+      }
       hotspotState.clear();
       if (window.SmartNPCGame && window.SmartNPCGame.resetPlayer) {
         window.SmartNPCGame.resetPlayer();
