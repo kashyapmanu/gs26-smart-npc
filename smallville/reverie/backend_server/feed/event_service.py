@@ -46,3 +46,6 @@ class PlayerEventService:
         if since is None:
             return list(self._events)
         return [e for e in self._events if e.when >= since]
+
+    def clear(self) -> None:
+        self._events.clear()

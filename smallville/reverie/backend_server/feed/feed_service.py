@@ -50,3 +50,9 @@ class FeedService:
     def all_posts(self) -> List[Post]:
         with self._lock:
             return [self._posts[pid] for pid in self._order]
+
+    def clear(self) -> None:
+        with self._lock:
+            self._posts.clear()
+            self._order.clear()
+            self._seq = 0
