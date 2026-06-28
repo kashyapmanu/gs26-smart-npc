@@ -49,6 +49,22 @@
     buildingsLayer.setDepth(1);
     decorationLayer.setDepth(2);
 
+    // Fire glow overlay on the burning house (left side)
+    const fireEmitter = this.add.particles("atlas", {
+      frame: "down",
+      x: 288,
+      y: 560,
+      speed: { min: -30, max: 30 },
+      angle: { min: 240, max: 300 },
+      scale: { start: 0.4, end: 0 },
+      alpha: { start: 0.8, end: 0 },
+      lifespan: 800,
+      frequency: 80,
+      tint: [0xff5500, 0xffaa00],
+      blendMode: "ADD",
+    });
+    fireEmitter.setDepth(2);
+
     const SPAWN = { x: 800, y: 640 };
 
     // Player sprite — visible above ground (depth 1), below foreground decoration (depth 2)
@@ -61,6 +77,26 @@
 
     // Store references on the scene for update()
     this._snPlayer = player;
+
+    // Child NPC at the burning house threshold
+    const child = this.physics.add.sprite(350, 600, "atlas", "down");
+    child.setDepth(1);
+    child.body.immovable = true;
+
+    // Owner NPC at the restaurant
+    const owner = this.physics.add.sprite(1250, 600, "atlas", "down");
+    owner.setDepth(1);
+    owner.body.immovable = true;
+
+    const wanderers = [];
+    for (const wx of [512, 700, 900, 1050, 1180]) {
+      const npc = this.physics.add.sprite(wx, 640, "atlas", "down");
+      npc.setDepth(1);
+      npc.body.setCollideWorldBounds(true);
+      wanderers.push(npc);
+    }
+    this._snWanderers = wanderers;
+    this._snNextWander = 0;
 
     window.SmartNPCGame.resetPlayer = () => {
       if (player && player.body) {
@@ -113,6 +149,21 @@
       window.SmartNPCPlayer.update(this, this._snPlayer);
     }
     updatePlayerAnimation(this._snPlayer);
+    updateWanderers(this, time);
+  }
+
+  function updateWanderers(scene, time) {
+    if (!scene._snWanderers || time < scene._snNextWander) return;
+    scene._snNextWander = time + 1000;
+    for (const npc of scene._snWanderers) {
+      const speed = 60;
+      const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+      npc.body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+      const anim = Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))
+        ? (Math.cos(angle) > 0 ? "walk-right" : "walk-left")
+        : (Math.sin(angle) > 0 ? "walk-down" : "walk-up");
+      npc.play(anim, true);
+    }
   }
 
   function updatePlayerAnimation(player) {
