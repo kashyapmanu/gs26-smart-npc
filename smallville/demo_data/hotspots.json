@@ -1,4 +1,0 @@
-[
-  {"type": "rescue_person", "where": "residential/fire_house", "x": 320, "y": 200, "r": 32},
-  {"type": "order_food",     "where": "market/restaurant",     "x": 780, "y": 540, "r": 32}
-]

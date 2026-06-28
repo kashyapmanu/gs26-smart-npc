@@ -1,8 +1,0 @@
-.superpowers/
-
-smallville/storage/
-smallville/environment/frontend_server/storage/
-smallville/environment/frontend_server/temp_storage/
-smallville/.venv/
-smallville/.env
-*.sqlite3
