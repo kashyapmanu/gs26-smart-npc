@@ -71,7 +71,7 @@ class ActionIn(BaseModel):
 def post_action(action: ActionIn):
     ev = _events.handle_action({"type": action.type, "where": action.where}, t=action.t)
     if action.type == "order_food":
-        line = maybe_refuse_payment_line(_owner_memory, event=ev)
+        line = maybe_refuse_payment_line(event=ev)
         if line:
             # Surface the LLM line as a feed post authored by the restaurant
             # owner. The feed overlay (frontend) will render it live.
