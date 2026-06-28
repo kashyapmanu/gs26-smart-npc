@@ -1,4 +1,4 @@
 [
-  {"type": "rescue_person", "where": "residential/fire_house", "x": 320, "y": 200, "r": 32},
-  {"type": "order_food",     "where": "market/restaurant",     "x": 780, "y": 540, "r": 32}
+  {"type": "rescue_person", "where": "fire_house",  "x": 288, "y": 600, "r": 48},
+  {"type": "order_food",    "where": "restaurant",  "x": 1328, "y": 600, "r": 48}
 ]

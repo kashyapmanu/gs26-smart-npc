@@ -49,13 +49,28 @@
     buildingsLayer.setDepth(1);
     decorationLayer.setDepth(2);
 
+    const SPAWN = { x: 800, y: 640 };
+
     // Player sprite — visible above ground (depth 1), below foreground decoration (depth 2)
     const player = this.physics.add
-      .sprite(800, 640, "atlas", "down")
+      .sprite(SPAWN.x, SPAWN.y, "atlas", "down")
       .setSize(30, 40)
       .setOffset(0, 0);
     player.setDepth(1);
     player.setCollideWorldBounds(true);
+
+    // Store references on the scene for update()
+    this._snPlayer = player;
+    this._snSpawn = SPAWN;
+
+    window.SmartNPCGame.resetPlayer = () => {
+      if (player && player.body) {
+        player.body.reset(SPAWN.x, SPAWN.y);
+        player.setVelocity(0, 0);
+        player.anims.stop();
+        player.setFrame("down");
+      }
+    };
 
     // Walk animations
     this.anims.create({
@@ -92,8 +107,6 @@
     if (window.SmartNPCPlayer) {
       window.SmartNPCPlayer.init(this, player);
     }
-
-    this._snPlayer = player;
   }
 
   function update(time, delta) {

@@ -2,10 +2,28 @@
   const SMART_NPC_API = window.SMART_NPC_API || "http://localhost:8001";
   const hotspotState = new Map();
   let keys = null;
+  let resetKey = null;
 
   function bindKeys(scene) {
     if (keys) return;
     keys = scene.input.keyboard.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT");
+    resetKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    resetKey.on("down", onReset);
+  }
+
+  async function onReset() {
+    try {
+      await fetch(`${SMART_NPC_API}/demo/reset`, { method: "POST" });
+      hotspotState.clear();
+      if (window.SmartNPCGame && window.SmartNPCGame.resetPlayer) {
+        window.SmartNPCGame.resetPlayer();
+      }
+      if (window.SmartNPCFeed && window.SmartNPCFeed.clear) {
+        window.SmartNPCFeed.clear();
+      }
+    } catch (e) {
+      console.warn("smart-npc reset failed", e);
+    }
   }
 
   function applyMovement(player) {
