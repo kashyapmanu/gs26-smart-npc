@@ -1,6 +1,10 @@
 from feed.feed_service import FeedService
 from feed.event_service import PlayerEventService
 from feed.callback import maybe_mournful_line
+from fastapi.testclient import TestClient
+from smart_npc_api import app
+
+client = TestClient(app)
 
 
 def test_feed_service_clear():
@@ -42,12 +46,6 @@ def test_mournful_line_grounds_in_fact(monkeypatch):
     assert "fire" in captured["prompt"].lower()
 
 
-from fastapi.testclient import TestClient
-from smart_npc_api import app
-
-client = TestClient(app)
-
-
 def test_order_food_happy_when_rescue_exists():
     client.post("/demo/reset")
     client.post("/player/action", json={"type": "rescue_person", "where": "fire_house", "t": 1.0})
@@ -67,6 +65,7 @@ def test_order_food_sad_when_no_rescue():
 
 
 def test_demo_reset_clears_events_and_feed():
+    client.post("/demo/reset")
     client.post("/player/action", json={"type": "rescue_person", "where": "fire_house", "t": 1.0})
     r = client.post("/demo/reset")
     assert r.status_code == 200

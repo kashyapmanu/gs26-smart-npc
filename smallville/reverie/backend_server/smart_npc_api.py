@@ -74,20 +74,16 @@ def post_action(action: ActionIn):
         prior_rescues = [e for e in _events.list_events() if e.verb == "rescued"]
         if prior_rescues:
             line = maybe_refuse_payment_line(event=prior_rescues[-1])
-            _feed.create_post(
-                author="restaurant owner",
-                text=line or "Your meal is on me — you rescued my niece today.",
-                ts=action.t,
-                audience="town",
-            )
+            text = line or "Your meal is on me — you rescued my niece today."
         else:
             line = maybe_mournful_line(event=ev)
-            _feed.create_post(
-                author="restaurant owner",
-                text=line or "I can't offer you a discount today... my niece was in that fire.",
-                ts=action.t,
-                audience="town",
-            )
+            text = line or "I can't offer you a discount today... my niece was in that fire."
+        _feed.create_post(
+            author="restaurant owner",
+            text=text,
+            ts=action.t,
+            audience="town",
+        )
 
     return ev.to_dict()
 
